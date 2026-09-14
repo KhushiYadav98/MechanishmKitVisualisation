@@ -85,7 +85,7 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _BaseAlpha: 0.986
+    - _BaseAlpha: 0.173
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
@@ -97,8 +97,8 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _EmissionIntensity: 1.5
-    - _EmissionMapIntensity: 0.65
+    - _EmissionIntensity: 1.45
+    - _EmissionMapIntensity: 0
     - _EnvironmentReflections: 1
     - _FlickerAmount: 0.035
     - _FlickerSpeed: 8
@@ -110,8 +110,8 @@ Material:
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _RimIntensity: 0.08
-    - _RimPower: 0.65
+    - _RimIntensity: 0.39
+    - _RimPower: 8
     - _ScanFrequency: 1
     - _ScanIntensity: 10
     - _ScanSpeed: 0.6
