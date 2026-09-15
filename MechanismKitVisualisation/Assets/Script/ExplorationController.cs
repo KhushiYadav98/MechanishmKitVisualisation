@@ -169,6 +169,7 @@ public class ExplorationController : MonoBehaviour
         StopAllFloating();
         if (_resetRoutine != null) StopCoroutine(_resetRoutine);
         _resetRoutine = StartCoroutine(ResetTargetPositionsRoutine());
+        infoUIPanel.SetActive(false);
     }
 
     private IEnumerator ResetTargetPositionsRoutine()
@@ -234,6 +235,7 @@ public class ExplorationController : MonoBehaviour
 
         gameObject.SetActive(false);
         if (startupModule != null) startupModule.SetActive(true);
+        infoUIPanel.SetActive(false);
     }
 
     /// <summary>
