@@ -133,7 +133,33 @@ public class StartupFlowController : MonoBehaviour
             PositionSetModule.SetActive(true);
         }
         if (cylindricalBaseTransform != null) cylindricalBaseTransform.gameObject.SetActive(false);
+    } 
+
+         public void StartProcessAni()
+    {
+        if (ProcessModule != null)
+        {
+            // Only sync to the cylinder base's position the first time - after
+            // that, keep whatever position the user last left it at inside the
+            // Position Set module instead of re-snapping it every re-entry.
+            if (!_positionSetStarted && cylindricalBaseTransform != null)
+            {
+                ProcessModule.transform.position = cylindricalBaseTransform.position;
+            }
+            _positionSetStarted = true;
+            ProcessModule.SetActive(true);
+        }
+        if (cylindricalBaseTransform != null) cylindricalBaseTransform.gameObject.SetActive(false);
     }
+
+    /// <summary>Hook this up to the Process module's Back button's OnClick.</summary>
+    public void GoBackFromProcess()
+    {
+        if (ProcessModule != null) ProcessModule.SetActive(false);
+        if (cylindricalBaseTransform != null) cylindricalBaseTransform.gameObject.SetActive(true);
+    }
+
+
 
     /// <summary>Hook this up to the "Placement Done" button's OnClick.</summary>
     public void TriggerPlacementDone()
