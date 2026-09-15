@@ -54,6 +54,7 @@ public class StartupFlowController : MonoBehaviour
 
     private bool _isRevealing;
     private bool _placementDone;
+    private bool _positionSetStarted;
 
     private readonly List<Material> _unfinishedMaterials = new List<Material>();
     private readonly List<Material> _realMaterials = new List<Material>();
@@ -121,14 +122,18 @@ public class StartupFlowController : MonoBehaviour
     {
         if (PositionSetModule != null)
         {
-            if (cylindricalBaseTransform != null)
+            // Only sync to the cylinder base's position the first time - after
+            // that, keep whatever position the user last left it at inside the
+            // Position Set module instead of re-snapping it every re-entry.
+            if (!_positionSetStarted && cylindricalBaseTransform != null)
             {
                 PositionSetModule.transform.position = cylindricalBaseTransform.position;
             }
+            _positionSetStarted = true;
             PositionSetModule.SetActive(true);
         }
         if (cylindricalBaseTransform != null) cylindricalBaseTransform.gameObject.SetActive(false);
-    } 
+    }
 
     /// <summary>Hook this up to the "Placement Done" button's OnClick.</summary>
     public void TriggerPlacementDone()
