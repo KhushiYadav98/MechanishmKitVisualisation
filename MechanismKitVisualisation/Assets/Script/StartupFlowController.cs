@@ -25,8 +25,11 @@ public class StartupFlowController : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject placementButtonCanvas;
 
-    [Header("Exploration")]
+    [Header("Modules")]
     [SerializeField] private GameObject explorationModule;
+    [SerializeField] private GameObject PositionSetModule;
+
+    [SerializeField] private GameObject ProcessModule;
 
     [Header("Grab Interaction")]
     [SerializeField] private Behaviour grabbableScript;
@@ -112,7 +115,20 @@ public class StartupFlowController : MonoBehaviour
             explorationModule.SetActive(true);
         }
         if (cylindricalBaseTransform != null) cylindricalBaseTransform.gameObject.SetActive(false);
-    }
+    } 
+
+     public void StartPositionSet()
+    {
+        if (PositionSetModule != null)
+        {
+            if (cylindricalBaseTransform != null)
+            {
+                PositionSetModule.transform.position = cylindricalBaseTransform.position;
+            }
+            PositionSetModule.SetActive(true);
+        }
+        if (cylindricalBaseTransform != null) cylindricalBaseTransform.gameObject.SetActive(false);
+    } 
 
     /// <summary>Hook this up to the "Placement Done" button's OnClick.</summary>
     public void TriggerPlacementDone()
