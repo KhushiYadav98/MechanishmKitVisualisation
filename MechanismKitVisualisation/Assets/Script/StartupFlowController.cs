@@ -96,7 +96,16 @@ public class StartupFlowController : MonoBehaviour
         if (placementButtonCanvas != null) placementButtonCanvas.SetActive(false);
         realModel.SetActive(false);
 
-        startupModule.SetActive(true);
+        ActivateOnlyModule(startupModule);
+    }
+
+    /// <summary>Activates exactly one of the four modules and deactivates the rest.</summary>
+    private void ActivateOnlyModule(GameObject moduleToActivate)
+    {
+        if (startupModule != null) startupModule.SetActive(startupModule == moduleToActivate);
+        if (explorationModule != null) explorationModule.SetActive(explorationModule == moduleToActivate);
+        if (PositionSetModule != null) PositionSetModule.SetActive(PositionSetModule == moduleToActivate);
+        if (ProcessModule != null) ProcessModule.SetActive(ProcessModule == moduleToActivate);
     }
     /// <summary>Hook this up to the model's grab/select event, to show the "Placement Done" button.</summary>
     public void ShowPlacementButton()
@@ -113,56 +122,43 @@ public class StartupFlowController : MonoBehaviour
     /// <summary>Hook this up to the "Explore" button's OnClick.</summary>
     public void StartExploration()
     {
-        if (explorationModule != null)
+        if (explorationModule != null && cylindricalBaseTransform != null)
         {
-            if (cylindricalBaseTransform != null)
-            {
-                explorationModule.transform.position = cylindricalBaseTransform.position;
-            }
-            explorationModule.SetActive(true);
+            explorationModule.transform.position = cylindricalBaseTransform.position;
         }
-        if (cylindricalBaseTransform != null) cylindricalBaseTransform.gameObject.SetActive(false);
-    } 
+        ActivateOnlyModule(explorationModule);
+    }
 
      public void StartPositionSet()
     {
-        if (PositionSetModule != null)
+        // Only sync to the cylinder base's position the first time - after
+        // that, keep whatever position the user last left it at inside the
+        // Position Set module instead of re-snapping it every re-entry.
+        if (PositionSetModule != null && !_positionSetStarted && cylindricalBaseTransform != null)
         {
-            // Only sync to the cylinder base's position the first time - after
-            // that, keep whatever position the user last left it at inside the
-            // Position Set module instead of re-snapping it every re-entry.
-            if (!_positionSetStarted && cylindricalBaseTransform != null)
-            {
-                PositionSetModule.transform.position = cylindricalBaseTransform.position;
-            }
-            _positionSetStarted = true;
-            PositionSetModule.SetActive(true);
+            PositionSetModule.transform.position = cylindricalBaseTransform.position;
         }
-        if (cylindricalBaseTransform != null) cylindricalBaseTransform.gameObject.SetActive(false);
-    } 
+        _positionSetStarted = true;
+        ActivateOnlyModule(PositionSetModule);
+    }
 
          public void StartProcessAni()
     {
-        if (ProcessModule != null)
+        // Only sync to the cylinder base's position the first time - after
+        // that, keep whatever position the user last left it at inside the
+        // Position Set module instead of re-snapping it every re-entry.
+        if (ProcessModule != null &&  cylindricalBaseTransform != null)
         {
-            // Only sync to the cylinder base's position the first time - after
-            // that, keep whatever position the user last left it at inside the
-            // Position Set module instead of re-snapping it every re-entry.
-            if (!_positionSetStarted && cylindricalBaseTransform != null)
-            {
-                ProcessModule.transform.position = cylindricalBaseTransform.position;
-            }
-            _positionSetStarted = true;
-            ProcessModule.SetActive(true);
+            ProcessModule.transform.position = cylindricalBaseTransform.position;
         }
-        if (cylindricalBaseTransform != null) cylindricalBaseTransform.gameObject.SetActive(false);
+        _positionSetStarted = true;
+        ActivateOnlyModule(ProcessModule);
     }
 
     /// <summary>Hook this up to the Process module's Back button's OnClick.</summary>
     public void GoBackFromProcess()
     {
-        if (ProcessModule != null) ProcessModule.SetActive(false);
-        if (cylindricalBaseTransform != null) cylindricalBaseTransform.gameObject.SetActive(true);
+        ActivateOnlyModule(startupModule);
     }
 
 
