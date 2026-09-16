@@ -42,6 +42,8 @@ public class StartupFlowController : MonoBehaviour
     [SerializeField] private float revealDuration = 2f;
     [SerializeField] private AnimationCurve revealCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] private Shader revealShader;
+    [SerializeField] private AudioSource revealAudioSource;
+    [SerializeField] private AudioClip revealSound;
 
     [Header("Pop-Up Objects (shown once reveal completes)")]
     [SerializeField] private GameObject[] popUpObjects;
@@ -193,6 +195,11 @@ public class StartupFlowController : MonoBehaviour
     private IEnumerator RevealRoutine()
     {
         _isRevealing = true;
+
+        if (revealAudioSource != null && revealSound != null)
+        {
+            revealAudioSource.PlayOneShot(revealSound);
+        }
 
         // realModel starts out parented under unfinishedModel so it inherits its
         // placement. Detach it first (keeping its current world transform) so it
