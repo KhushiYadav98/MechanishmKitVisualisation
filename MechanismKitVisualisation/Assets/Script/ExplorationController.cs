@@ -32,6 +32,9 @@ public class ExplorationController : MonoBehaviour
     [SerializeField] private List<ExplorationComponentData> components;
     [SerializeField] private Material highlightMaterial;
 
+    [Header("Main UI")]
+    [SerializeField] private GameObject mainUIPanel;
+
     [Header("Shared Info UI")]
     [SerializeField] private GameObject infoUIPanel;
     [SerializeField] private TextMeshProUGUI subheadingText;
@@ -50,7 +53,7 @@ public class ExplorationController : MonoBehaviour
     private Dictionary<string, List<RendererCache>> _rendererCaches;
     private readonly List<(Transform transform, Vector3 originalPosition, Quaternion originalRotation)> _originalTransforms =
         new List<(Transform, Vector3, Quaternion)>();
-    private readonly Dictionary<string, List<Coroutine>> _floatRoutines = new Dictionary<string, List<Coroutine>>();
+    private readonly Dictionary<Transform, Coroutine> _floatRoutines = new Dictionary<Transform, Coroutine>();
 
     private Coroutine _resetRoutine;
 
@@ -83,8 +86,10 @@ public class ExplorationController : MonoBehaviour
         }
 
         if (infoUIPanel != null) infoUIPanel.SetActive(false);
+        if (mainUIPanel != null) mainUIPanel.SetActive(true);
     }
-
+   
+   
     /// <summary>Hook this up to each component's grab/select event, with that component's id as the static argument.</summary>
     public void OnComponentGrabbed(string componentId)
     {
@@ -94,37 +99,34 @@ public class ExplorationController : MonoBehaviour
             return;
         }
 
-        // In case it's being re-grabbed while still floating from a previous release.
-        StopFloating(componentId);
+        // In case one of this id's objects is being re-grabbed while still floating from a previous release.
+        foreach (GameObject targetObject in data.targetObjects)
+        {
+            if (targetObject != null) StopFloatingFor(targetObject.transform);
+        }
 
         if (_rendererCaches.TryGetValue(componentId, out List<RendererCache> caches))
         {
             RestoreOriginalMaterials(caches);
         }
-
+        mainUIPanel.SetActive(false);
         if (infoUIPanel != null) infoUIPanel.SetActive(true);
         if (subheadingText != null) subheadingText.text = data.subheading;
         if (infoText != null) infoText.text = data.infoText;
     }
 
-    /// <summary>Hook this up to each component's release/unselect event, with that component's id as the static argument.</summary>
-    public void OnComponentReleased(string componentId)
+    /// <summary>
+    /// Hook this up to each individual component's release/unselect event,
+    /// with that specific GameObject (itself) as the static argument. Only
+    /// the released object floats - not the other objects sharing its id
+    /// (e.g. the other 3 Proximity Sensors).
+    /// </summary>
+    public void OnComponentReleased(GameObject target)
     {
-        if (!_lookup.TryGetValue(componentId, out ExplorationComponentData data))
-        {
-            Debug.LogWarning($"ExplorationController: no data found for component id '{componentId}'.");
-            return;
-        }
+        if (target == null) return;
 
-        StopFloating(componentId);
-
-        var routines = new List<Coroutine>();
-        foreach (GameObject targetObject in data.targetObjects)
-        {
-            if (targetObject == null) continue;
-            routines.Add(StartCoroutine(FloatRoutine(targetObject.transform)));
-        }
-        _floatRoutines[componentId] = routines;
+        StopFloatingFor(target.transform);
+        _floatRoutines[target.transform] = StartCoroutine(FloatRoutine(target.transform));
     }
 
     private IEnumerator FloatRoutine(Transform target)
@@ -140,25 +142,19 @@ public class ExplorationController : MonoBehaviour
         }
     }
 
-    private void StopFloating(string componentId)
+    private void StopFloatingFor(Transform target)
     {
-        if (!_floatRoutines.TryGetValue(componentId, out List<Coroutine> routines)) return;
+        if (!_floatRoutines.TryGetValue(target, out Coroutine routine)) return;
 
-        foreach (Coroutine routine in routines)
-        {
-            if (routine != null) StopCoroutine(routine);
-        }
-        _floatRoutines.Remove(componentId);
+        if (routine != null) StopCoroutine(routine);
+        _floatRoutines.Remove(target);
     }
 
     private void StopAllFloating()
     {
-        foreach (List<Coroutine> routines in _floatRoutines.Values)
+        foreach (Coroutine routine in _floatRoutines.Values)
         {
-            foreach (Coroutine routine in routines)
-            {
-                if (routine != null) StopCoroutine(routine);
-            }
+            if (routine != null) StopCoroutine(routine);
         }
         _floatRoutines.Clear();
     }
@@ -216,7 +212,8 @@ public class ExplorationController : MonoBehaviour
 
     /// <summary>Hook this up to the Back button's OnClick.</summary>
     public void GoBackToStartup()
-    {
+    { 
+       
         StopAllFloating();
         if (_resetRoutine != null)
         {
@@ -236,6 +233,7 @@ public class ExplorationController : MonoBehaviour
         gameObject.SetActive(false);
         if (startupModule != null) startupModule.SetActive(true);
         infoUIPanel.SetActive(false);
+         mainUIPanel.SetActive(true);
     }
 
     /// <summary>

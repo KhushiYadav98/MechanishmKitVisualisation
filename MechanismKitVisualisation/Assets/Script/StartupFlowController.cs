@@ -26,6 +26,8 @@ public class StartupFlowController : MonoBehaviour
     [SerializeField] private GameObject placementButtonCanvas;
 
     [Header("Modules")]
+
+    [SerializeField] private GameObject startupModule;
     [SerializeField] private GameObject explorationModule;
     [SerializeField] private GameObject PositionSetModule;
 
@@ -45,6 +47,8 @@ public class StartupFlowController : MonoBehaviour
     [SerializeField] private GameObject[] popUpObjects;
     [SerializeField] private float popUpDuration = 0.35f;
     [SerializeField] private AnimationCurve popUpCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+    
 
     private Vector3[] _popUpInitialScales;
 
@@ -91,6 +95,8 @@ public class StartupFlowController : MonoBehaviour
     {
         if (placementButtonCanvas != null) placementButtonCanvas.SetActive(false);
         realModel.SetActive(false);
+
+        startupModule.SetActive(true);
     }
     /// <summary>Hook this up to the model's grab/select event, to show the "Placement Done" button.</summary>
     public void ShowPlacementButton()
@@ -177,6 +183,8 @@ public class StartupFlowController : MonoBehaviour
 
         _placementDone = true;
      //   onPlacementDone?.Invoke();
+
+     startupModule.GetComponent<MeshRenderer>().enabled = false;
         StartCoroutine(RevealRoutine());
     }
 
