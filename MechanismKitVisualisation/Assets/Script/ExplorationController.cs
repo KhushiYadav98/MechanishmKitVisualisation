@@ -44,6 +44,8 @@ public class ExplorationController : MonoBehaviour
     [SerializeField] private GameObject startupModule;
     [SerializeField] private float resetDuration = 1f;
     [SerializeField] private AnimationCurve resetCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField] private Transform cylindricalBaseTransform;
+    [SerializeField] private Vector3 cylindricalBaseStartRotation = new Vector3(90f, 0f, 0f);
 
     [Header("Idle Float (after release)")]
     [SerializeField] private float floatAmplitude = 0.02f;
@@ -51,8 +53,8 @@ public class ExplorationController : MonoBehaviour
 
     private Dictionary<string, ExplorationComponentData> _lookup;
     private Dictionary<string, List<RendererCache>> _rendererCaches;
-    private readonly List<(Transform transform, Vector3 originalPosition, Quaternion originalRotation)> _originalTransforms =
-        new List<(Transform, Vector3, Quaternion)>();
+    private readonly List<(Transform transform, Vector3 originalLocalPosition, Quaternion originalLocalRotation, Vector3 originalLocalScale)> _originalTransforms =
+        new List<(Transform, Vector3, Quaternion, Vector3)>();
     private readonly Dictionary<Transform, Coroutine> _floatRoutines = new Dictionary<Transform, Coroutine>();
 
     private Coroutine _resetRoutine;
@@ -80,7 +82,7 @@ public class ExplorationController : MonoBehaviour
             foreach (GameObject targetObject in data.targetObjects)
             {
                 if (targetObject == null) continue;
-                _originalTransforms.Add((targetObject.transform, targetObject.transform.position, targetObject.transform.rotation));
+                _originalTransforms.Add((targetObject.transform, targetObject.transform.localPosition, targetObject.transform.localRotation, targetObject.transform.localScale));
                 caches.AddRange(CacheAndApplyHighlight(targetObject));
             }
         }
@@ -170,6 +172,12 @@ public class ExplorationController : MonoBehaviour
 
     private IEnumerator ResetTargetPositionsRoutine()
     {
+        // Scale correction and the cylindrical base's rotation reset happen
+        // instantly, up front - only then do the components animate back to
+        // their original position/rotation.
+        SnapTargetScales();
+        ResetCylindricalBaseRotation();
+
         int count = _originalTransforms.Count;
         var startPositions = new Vector3[count];
         var startRotations = new Quaternion[count];
@@ -177,8 +185,8 @@ public class ExplorationController : MonoBehaviour
         {
             Transform t = _originalTransforms[i].transform;
             if (t == null) continue;
-            startPositions[i] = t.position;
-            startRotations[i] = t.rotation;
+            startPositions[i] = t.localPosition;
+            startRotations[i] = t.localRotation;
         }
 
         float time = 0f;
@@ -190,8 +198,8 @@ public class ExplorationController : MonoBehaviour
             {
                 Transform t = _originalTransforms[i].transform;
                 if (t == null) continue;
-                t.position = Vector3.LerpUnclamped(startPositions[i], _originalTransforms[i].originalPosition, p);
-                t.rotation = Quaternion.SlerpUnclamped(startRotations[i], _originalTransforms[i].originalRotation, p);
+                t.localPosition = Vector3.LerpUnclamped(startPositions[i], _originalTransforms[i].originalLocalPosition, p);
+                t.localRotation = Quaternion.SlerpUnclamped(startRotations[i], _originalTransforms[i].originalLocalRotation, p);
             }
             yield return null;
         }
@@ -202,11 +210,28 @@ public class ExplorationController : MonoBehaviour
 
     private void SnapTargetTransforms()
     {
-        foreach ((Transform transform, Vector3 originalPosition, Quaternion originalRotation) in _originalTransforms)
+        foreach ((Transform transform, Vector3 originalLocalPosition, Quaternion originalLocalRotation, Vector3 originalLocalScale) in _originalTransforms)
         {
             if (transform == null) continue;
-            transform.position = originalPosition;
-            transform.rotation = originalRotation;
+            transform.localPosition = originalLocalPosition;
+            transform.localRotation = originalLocalRotation;
+        }
+    }
+
+    private void SnapTargetScales()
+    {
+        foreach ((Transform transform, Vector3 originalLocalPosition, Quaternion originalLocalRotation, Vector3 originalLocalScale) in _originalTransforms)
+        {
+            if (transform == null) continue;
+            transform.localScale = originalLocalScale;
+        }
+    }
+
+    private void ResetCylindricalBaseRotation()
+    {
+        if (cylindricalBaseTransform != null)
+        {
+            cylindricalBaseTransform.localRotation = Quaternion.Euler(cylindricalBaseStartRotation);
         }
     }
 
@@ -220,6 +245,8 @@ public class ExplorationController : MonoBehaviour
             StopCoroutine(_resetRoutine);
             _resetRoutine = null;
         }
+        SnapTargetScales();
+        ResetCylindricalBaseRotation();
         SnapTargetTransforms();
 
         if (_rendererCaches != null)
