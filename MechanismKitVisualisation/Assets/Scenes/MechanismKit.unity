@@ -7498,7 +7498,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1127388506
 Transform:
   m_ObjectHideFlags: 0
@@ -8537,37 +8537,38 @@ MonoBehaviour:
     subheading: RFID
     infoText: Reads radio frequency and writes identification data stored on an RFID
       tag.
-    audioClip: {fileID: 8300000, guid: 4972356c9d6afb348b81a81000339101, type: 3}
+    audioClip: {fileID: 8300000, guid: e00537d2fc48c0644a3f8ea2a389de5f, type: 3}
   - id: Actuator
     targetObjects:
     - {fileID: 534178784}
     subheading: Actuator
-    infoText: Converts pneumatic or electrical energy into mechanical movement.
-    audioClip: {fileID: 8300000, guid: 4972356c9d6afb348b81a81000339101, type: 3}
+    infoText: Converts electrical energy into linear movement.
+    audioClip: {fileID: 8300000, guid: 42ef749ba6e35314e9f188520078ab9b, type: 3}
   - id: Camera
     targetObjects:
     - {fileID: 4491427202340835071}
     subheading: Camera
-    infoText: Captures images to detect, identify and inspect the workpiece.
-    audioClip: {fileID: 0}
+    infoText: Captures images to inspect the workpiece.
+    audioClip: {fileID: 8300000, guid: 57b6a1ec061133c4cb4f4cdd875afe98, type: 3}
   - id: MCB
     targetObjects:
     - {fileID: 7305805726672564427}
     subheading: MCB
-    infoText: Supplies electrical power and protects the system from electrical faults.
-    audioClip: {fileID: 0}
+    infoText: "Acts as a switch to turn the system\u2019s electrical supply ON or
+      OFF."
+    audioClip: {fileID: 8300000, guid: 3dc7670b199c2c746853d0a95886ff10, type: 3}
   - id: Ultra Sonic Sensor
     targetObjects:
     - {fileID: 7000889789292035502}
     subheading: Ultra Sonic Sensor
-    infoText: Uses ultrasonic sensing to measure the distance to the workpiece.
-    audioClip: {fileID: 0}
+    infoText: To measure the depth and distance of the workpiece.
+    audioClip: {fileID: 8300000, guid: a7c949e875e39044aaabd1be41d4295f, type: 3}
   - id: WorkPiece
     targetObjects:
     - {fileID: 2940365049198819182}
     subheading: WorkPiece
-    infoText: The component being positioned, assembled, glued or pressed.
-    audioClip: {fileID: 0}
+    infoText: A 3D-printed component used to demonstrate the automation process.
+    audioClip: {fileID: 8300000, guid: c11d7e076845d0643a1d2dd6b4b0d7c0, type: 3}
   - id: Proximity Sensor
     targetObjects:
     - {fileID: 1106358120675412996}
@@ -8576,25 +8577,26 @@ MonoBehaviour:
     - {fileID: 399676991896399775}
     subheading: Proximity Sensor
     infoText: Detects the presence of a workpiece without physical contact.
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: 7634c11edb396e248890fcb244e8eb6a, type: 3}
   - id: Rotating Disk
     targetObjects:
     - {fileID: 1644656069522843724}
     subheading: Rotating Disk
-    infoText: 
-    audioClip: {fileID: 0}
+    infoText: "Mounted on the servo motor\u2019s end effector, it carries the workpiece
+      from one station to another."
+    audioClip: {fileID: 8300000, guid: fc403a0abab14734c8c4131ddf4ca5a5, type: 3}
   - id: Servo Drive
     targetObjects:
     - {fileID: 6383109977574928828}
     subheading: Servo Drive
     infoText: "Precisely controls the servo motor\u2019s speed, position and torque."
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: 0bfe0944a5e924c48b49e3ec2e3bdeaf, type: 3}
   - id: Servo Motor
     targetObjects:
     - {fileID: 564982020149413539}
     subheading: Servo Motor
     infoText: Converts electrical energy into precise rotary motion for machine movement.
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: 0bfe0944a5e924c48b49e3ec2e3bdeaf, type: 3}
   highlightMaterial: {fileID: 2100000, guid: 3ea9c8b985b236d469570ddfdaa816b5, type: 2}
   mainUIPanel: {fileID: 984294611}
   infoUIPanel: {fileID: 1941246697}
@@ -8631,7 +8633,7 @@ MonoBehaviour:
   floatAmplitude: 0.02
   floatSpeed: 1
   audioSource: {fileID: 1331698332}
-  startupAudioClip: {fileID: 8300000, guid: 4972356c9d6afb348b81a81000339101, type: 3}
+  startupAudioClip: {fileID: 8300000, guid: 9fa94e26932208c4484a753cff4ce544, type: 3}
 --- !u!82 &1331698332
 AudioSource:
   m_ObjectHideFlags: 0
@@ -8786,7 +8788,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Converts electrical energy into precise rotary motion for machine movement.
+  m_text: 'This mechanism kit is a representation of an assembly line. It has 4 stations
+    - RFID, Ultra sonic sensor, Camera and Actuator. '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -9191,7 +9194,7 @@ MonoBehaviour:
   cylindricalBaseTransform: {fileID: 1438251025}
   startupModule: {fileID: 919132149376655724}
   audioSource: {fileID: 1438251027}
-  startupAudioClip: {fileID: 8300000, guid: 4972356c9d6afb348b81a81000339101, type: 3}
+  startupAudioClip: {fileID: 8300000, guid: 3b322190c79d0e94da1d35b1f571aa81, type: 3}
 --- !u!82 &1438251027
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9505,9 +9508,9 @@ MonoBehaviour:
   revealShader: {fileID: 4800000, guid: 2d327fc6af8e1ee4aaf5b7c8fa69ce84, type: 3}
   revealAudioSource: {fileID: 1452746406}
   revealSound: {fileID: 8300000, guid: 4972356c9d6afb348b81a81000339101, type: 3}
-  placeKitInstructionSound: {fileID: 8300000, guid: 4972356c9d6afb348b81a81000339101, type: 3}
+  placeKitInstructionSound: {fileID: 8300000, guid: 7adac1f9308059d4eb8a5fd0be3b00c6, type: 3}
   placeKitInstructionDelay: 3
-  processStartSound: {fileID: 8300000, guid: 4972356c9d6afb348b81a81000339101, type: 3}
+  processStartSound: {fileID: 8300000, guid: 2e0712af81930844b838debeeece77c7, type: 3}
   popUpObjects:
   - {fileID: 328116762}
   - {fileID: 520497957}
