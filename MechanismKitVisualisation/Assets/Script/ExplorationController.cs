@@ -21,6 +21,7 @@ public class ExplorationController : MonoBehaviour
         public GameObject[] targetObjects;
         public string subheading;
         [TextArea] public string infoText;
+        public AudioClip audioClip;
     }
 
     private class RendererCache
@@ -50,6 +51,10 @@ public class ExplorationController : MonoBehaviour
     [Header("Idle Float (after release)")]
     [SerializeField] private float floatAmplitude = 0.02f;
     [SerializeField] private float floatSpeed = 1f;
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip startupAudioClip;
 
     private Dictionary<string, ExplorationComponentData> _lookup;
     private Dictionary<string, List<RendererCache>> _rendererCaches;
@@ -90,8 +95,24 @@ public class ExplorationController : MonoBehaviour
         if (infoUIPanel != null) infoUIPanel.SetActive(false);
         if (mainUIPanel != null) mainUIPanel.SetActive(true);
     }
-   
-   
+
+    /// <summary>Fires every time this module is (re)activated, e.g. each time the user enters exploration.</summary>
+    private void OnEnable()
+    {
+        PlayAudio(startupAudioClip);
+    }
+
+    /// <summary>Stops whatever is currently playing and plays clip from the start - even if it's the same clip already playing.</summary>
+    private void PlayAudio(AudioClip clip)
+    {
+        if (audioSource == null || clip == null) return;
+
+        audioSource.Stop();
+        audioSource.clip = clip;
+        audioSource.Play();
+    }
+
+
     /// <summary>Hook this up to each component's grab/select event, with that component's id as the static argument.</summary>
     public void OnComponentGrabbed(string componentId)
     {
@@ -111,6 +132,9 @@ public class ExplorationController : MonoBehaviour
         {
             RestoreOriginalMaterials(caches);
         }
+
+        PlayAudio(data.audioClip);
+
         mainUIPanel.SetActive(false);
         if (infoUIPanel != null) infoUIPanel.SetActive(true);
         if (subheadingText != null) subheadingText.text = data.subheading;

@@ -5,11 +5,25 @@ public class PositionSetController : MonoBehaviour
     [SerializeField] private Transform cylindricalBaseTransform;
     [SerializeField] private GameObject startupModule;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip startupAudioClip;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
        cylindricalBaseTransform.gameObject.SetActive(true);
+    }
+
+    /// <summary>Fires every time this module is (re)activated.</summary>
+    private void OnEnable()
+    {
+        if (audioSource != null && startupAudioClip != null)
+        {
+            audioSource.Stop();
+            audioSource.clip = startupAudioClip;
+            audioSource.Play();
+        }
     }
 
     // Update is called once per frame

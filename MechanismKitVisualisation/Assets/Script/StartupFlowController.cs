@@ -44,6 +44,9 @@ public class StartupFlowController : MonoBehaviour
     [SerializeField] private Shader revealShader;
     [SerializeField] private AudioSource revealAudioSource;
     [SerializeField] private AudioClip revealSound;
+    [SerializeField] private AudioClip placeKitInstructionSound;
+    [SerializeField] private float placeKitInstructionDelay = 3f;
+    [SerializeField] private AudioClip processStartSound;
 
     [Header("Pop-Up Objects (shown once reveal completes)")]
     [SerializeField] private GameObject[] popUpObjects;
@@ -99,6 +102,18 @@ public class StartupFlowController : MonoBehaviour
         realModel.SetActive(false);
 
         ActivateOnlyModule(startupModule);
+
+        StartCoroutine(PlayPlaceKitInstructionRoutine());
+    }
+
+    private IEnumerator PlayPlaceKitInstructionRoutine()
+    {
+        yield return new WaitForSeconds(placeKitInstructionDelay);
+
+        if (revealAudioSource != null && placeKitInstructionSound != null)
+        {
+            revealAudioSource.PlayOneShot(placeKitInstructionSound);
+        }
     }
 
     /// <summary>Activates exactly one of the four modules and deactivates the rest.</summary>
@@ -155,6 +170,13 @@ public class StartupFlowController : MonoBehaviour
         }
         _positionSetStarted = true;
         ActivateOnlyModule(ProcessModule);
+
+        if (revealAudioSource != null && processStartSound != null)
+        {
+            revealAudioSource.Stop();
+            revealAudioSource.clip = processStartSound;
+            revealAudioSource.Play();
+        }
     }
 
     /// <summary>Hook this up to the Process module's Back button's OnClick.</summary>
