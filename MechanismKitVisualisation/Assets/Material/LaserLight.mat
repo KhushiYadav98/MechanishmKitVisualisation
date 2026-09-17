@@ -107,13 +107,13 @@ Material:
     - _EnvironmentReflections: 1
     - _FlickerAmount: 0.7
     - _FlickerSpeed: 0
-    - _FresnelBoost: 1.54
-    - _FresnelPower: 2.42
+    - _FresnelBoost: 1.13
+    - _FresnelPower: 1.36
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _HeightFadePower: 1.1
-    - _Intensity: 3.2
+    - _HeightFadePower: 1.4
+    - _Intensity: 1.8
     - _InvertHeightFade: 0
     - _Metallic: 0
     - _NoiseScale: 2

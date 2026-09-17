@@ -62,12 +62,19 @@ public class ExplorationController : MonoBehaviour
         new List<(Transform, Vector3, Quaternion, Vector3)>();
     private readonly Dictionary<Transform, Coroutine> _floatRoutines = new Dictionary<Transform, Coroutine>();
 
+    // Tracks how many hands currently have each id grabbed, so a two-hand
+    // grab on the same object doesn't retrigger audio/UI, and releasing one
+    // hand doesn't start the idle float while the other hand still holds it.
+    private readonly Dictionary<string, int> _grabCounts = new Dictionary<string, int>();
+    private Dictionary<GameObject, string> _targetToId;
+
     private Coroutine _resetRoutine;
 
     private void Awake()
     {
         _lookup = new Dictionary<string, ExplorationComponentData>();
         _rendererCaches = new Dictionary<string, List<RendererCache>>();
+        _targetToId = new Dictionary<GameObject, string>();
 
         foreach (ExplorationComponentData data in components)
         {
@@ -88,6 +95,7 @@ public class ExplorationController : MonoBehaviour
             {
                 if (targetObject == null) continue;
                 _originalTransforms.Add((targetObject.transform, targetObject.transform.localPosition, targetObject.transform.localRotation, targetObject.transform.localScale));
+                _targetToId[targetObject] = data.id;
                 caches.AddRange(CacheAndApplyHighlight(targetObject));
             }
         }
@@ -122,6 +130,14 @@ public class ExplorationController : MonoBehaviour
             return;
         }
 
+        _grabCounts.TryGetValue(componentId, out int grabCount);
+        _grabCounts[componentId] = grabCount + 1;
+
+        // A second hand grabbing an already-held object (two-hand scale) fires
+        // another Select event - only the first hand's grab should trigger
+        // audio/UI/material changes.
+        if (grabCount > 0) return;
+
         // In case one of this id's objects is being re-grabbed while still floating from a previous release.
         foreach (GameObject targetObject in data.targetObjects)
         {
@@ -150,6 +166,16 @@ public class ExplorationController : MonoBehaviour
     public void OnComponentReleased(GameObject target)
     {
         if (target == null) return;
+
+        if (_targetToId != null && _targetToId.TryGetValue(target, out string componentId))
+        {
+            _grabCounts.TryGetValue(componentId, out int grabCount);
+            grabCount = Mathf.Max(0, grabCount - 1);
+            _grabCounts[componentId] = grabCount;
+
+            // Still held by another hand (two-hand grab) - don't float yet.
+            if (grabCount > 0) return;
+        }
 
         StopFloatingFor(target.transform);
         _floatRoutines[target.transform] = StartCoroutine(FloatRoutine(target.transform));
