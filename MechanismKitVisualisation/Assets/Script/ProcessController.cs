@@ -3,20 +3,25 @@ using UnityEngine;
 /// <summary>
 /// Attach this to the same GameObject as the Animator playing the process
 /// animation - Animation Events call methods only on components on that exact
-/// GameObject. Add events in the FBX's Animation import Events list calling
-/// EnableLaserLight / DisableLaserLight at the desired frames.
+/// GameObject. Add an event in the FBX's Animation import Events list calling
+/// PlayLaserSound at the desired frame.
 /// </summary>
 public class ProcessController : MonoBehaviour
 {
-    [SerializeField] private GameObject laserLight;
+    
+    [SerializeField] private AudioSource audioSource;
+  
+    [SerializeField] private AudioClip actuatorSound;
 
-    public void EnableLaserLight()
-    {
-        if (laserLight != null) laserLight.SetActive(true);
-    }
+    /// <summary>Animation Event target - plays the laser sound once.</summary>
+  
 
-    public void DisableLaserLight()
+    /// <summary>Animation Event target - plays the actuator sound once.</summary>
+    public void PlayActuatorSound()
     {
-        if (laserLight != null) laserLight.SetActive(false);
+        if (audioSource != null && actuatorSound != null)
+        {
+            audioSource.PlayOneShot(actuatorSound);
+        }
     }
 }
