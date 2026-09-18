@@ -24,6 +24,7 @@ public class StartupFlowController : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GameObject placementButtonCanvas;
+    [SerializeField] private GameObject grabPlaceTextCanvas;
 
     [Header("Modules")]
 
@@ -75,6 +76,7 @@ public class StartupFlowController : MonoBehaviour
     private void Awake()
     {
         if (revealShader == null) revealShader = Shader.Find("Custom/RevealLit");
+        grabPlaceTextCanvas.SetActive(true);
 
         if (unfinishedModel != null)
         {
@@ -240,7 +242,7 @@ public class StartupFlowController : MonoBehaviour
         if (placementButtonCanvas != null) placementButtonCanvas.SetActive(false);
         if (grabbableScript != null) grabbableScript.enabled = false;
         if (handGrabInteractionObject != null) handGrabInteractionObject.SetActive(false);
-
+        grabPlaceTextCanvas.SetActive(false);
         _placementDone = true;
      //   onPlacementDone?.Invoke();
 
