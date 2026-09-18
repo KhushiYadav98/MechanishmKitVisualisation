@@ -38,6 +38,10 @@ public class StartupFlowController : MonoBehaviour
     [SerializeField] private GameObject handGrabInteractionObject;
     [SerializeField] private Transform cylindricalBaseTransform;
 
+    [Header("Spawn In Front Of User")]
+    [SerializeField] private Transform xrCamera;
+    [SerializeField] private float spawnDistance = 1.2f;
+
     [Header("Reveal Settings")]
     [SerializeField] private float revealDuration = 2f;
     [SerializeField] private AnimationCurve revealCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -108,9 +112,37 @@ public class StartupFlowController : MonoBehaviour
         if (placementButtonCanvas != null) placementButtonCanvas.SetActive(false);
         realModel.SetActive(false);
 
+        PositionStartupModuleInFrontOfUser();
         ActivateOnlyModule(startupModule);
 
         StartCoroutine(PlayPlaceKitInstructionRoutine());
+    }
+
+    /// <summary>
+    /// The headset's starting position/facing direction depends on wherever
+    /// the user happens to be standing and looking when tracking begins - it
+    /// is not fixed by the Eye Level/Floor Level tracking origin setting, which
+    /// only calibrates the vertical (Y) reference point. So instead of relying
+    /// on a fixed world position, move the starting module in front of wherever
+    /// the camera actually is at launch.
+    /// </summary>
+    private void PositionStartupModuleInFrontOfUser()
+    {
+        if (startupModule == null || xrCamera == null) return;
+
+        Vector3 forward = xrCamera.forward;
+        forward.y = 0f;
+        if (forward.sqrMagnitude < 0.0001f) forward = xrCamera.up;
+        forward.Normalize();
+
+        Vector3 targetPosition = xrCamera.position + forward * spawnDistance;
+        targetPosition.y = startupModule.transform.position.y;
+
+        // Position only - leave rotation as originally authored. This project's
+        // models don't follow a plain "local +Z is forward" convention, so a
+        // fresh LookRotation here turns the object to face the wrong way. The
+        // hand-authored rotation already looks correct; it just needs moving.
+        startupModule.transform.position = targetPosition;
     }
 
     private IEnumerator PlayPlaceKitInstructionRoutine()

@@ -9456,6 +9456,8 @@ MonoBehaviour:
   grabbableScript: {fileID: 3469287837294392437}
   handGrabInteractionObject: {fileID: 409583228}
   cylindricalBaseTransform: {fileID: 543450653378018262}
+  xrCamera: {fileID: 2136946881}
+  spawnDistance: 1.2
   revealDuration: 3.5
   revealCurve:
     serializedVersion: 2
@@ -11537,7 +11539,7 @@ MonoBehaviour:
   requestRecordAudioPermissionOnStartup: 0
   requestPassthroughCameraAccessPermissionOnStartup: 0
   _localDimming: 1
-  _trackingOriginType: 0
+  _trackingOriginType: 1
   usePositionTracking: 1
   useRotationTracking: 1
   useIPDInPositionTracking: 1
