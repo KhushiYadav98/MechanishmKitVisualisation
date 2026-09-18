@@ -46,7 +46,7 @@ public class StartupFlowController : MonoBehaviour
     [SerializeField] private AudioClip revealSound;
     [SerializeField] private AudioClip placeKitInstructionSound;
     [SerializeField] private float placeKitInstructionDelay = 3f;
-    [SerializeField] private AudioClip processStartSound;
+    [SerializeField] private AudioClip processModuleStartSound;
 
     [Header("Pop-Up Objects (shown once reveal completes)")]
     [SerializeField] private GameObject[] popUpObjects;
@@ -76,6 +76,13 @@ public class StartupFlowController : MonoBehaviour
         {
             unfinishedModel.SetActive(true);
             ConvertToRevealMaterials(unfinishedModel, invertClip: true, _unfinishedMaterials);
+
+            // _RevealHeight defaults to 0 until the reveal sequence sets it.
+            // With InvertClip on (show above threshold), carrying the model
+            // below world Y 0 during placement would clip the whole mesh away,
+            // exposing the OutlineBlack backfaces as a solid silhouette. Force
+            // it fully visible until TriggerPlacementDone takes over.
+            SetRevealHeight(_unfinishedMaterials, -10000f);
         }
 
         if (realModel != null)
@@ -171,10 +178,10 @@ public class StartupFlowController : MonoBehaviour
         _positionSetStarted = true;
         ActivateOnlyModule(ProcessModule);
 
-        if (revealAudioSource != null && processStartSound != null)
+        if (revealAudioSource != null && processModuleStartSound != null)
         {
             revealAudioSource.Stop();
-            revealAudioSource.clip = processStartSound;
+            revealAudioSource.clip = processModuleStartSound;
             revealAudioSource.Play();
         }
     }
@@ -183,6 +190,7 @@ public class StartupFlowController : MonoBehaviour
     public void GoBackFromProcess()
     {
         ActivateOnlyModule(startupModule);
+        revealAudioSource.Stop();
     }
 
 

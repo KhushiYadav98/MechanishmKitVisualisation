@@ -56,4 +56,10 @@ public class ProcessController : MonoBehaviour
             audioSource.PlayOneShot(actuatorSound);
         }
     }
+
+    /// <summary>Call this when leaving the Process module, so nothing keeps playing in the background.</summary>
+    public void StopAudio()
+    {
+        if (audioSource != null) audioSource.Stop();
+    }
 }
